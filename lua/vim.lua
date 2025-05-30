@@ -8,8 +8,7 @@ vim.keymap.set('n', '<C-n>', ':Neotree filesystem reveal left<CR>')
 
 vim.diagnostic.config({
   virtual_text = true,
-  signs = true,
+  signs = false,
   update_in_insert = false,
   underline = true,
 })
-
