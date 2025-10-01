@@ -10,9 +10,9 @@ return {
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
 			vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
 
-			conf.lua_ls.setup({
+			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
-				cmd = { "lua-language-server" }, -- provided by nix
+				cmd = { "lua-language-server" },
 				settings = {
 					Lua = {
 						diagnostics = {
@@ -21,8 +21,9 @@ return {
 					},
 				},
 			})
+			vim.lsp.enable("lua_ls")
 
-			conf.ts_ls.setup({
+			vim.lsp.config("ts_ls", {
 				capabilities = capabilities,
 				cmd = { "typescript-language-server", "--stdio" },
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
@@ -32,25 +33,27 @@ return {
 					},
 				},
 			})
+			vim.lsp.enable("ts_ls")
 
-			conf.intelephense.setup({
-				capabilities = capabilities,
-				cmd = { "intelephense", "--stdio" },
-				filetypes = { "php" },
-				settings = {
-					diagnostics = {
-						globals = { "vim" },
-					},
-				},
-			})
+			-- conf.intelephense.setup({
+			-- 	capabilities = capabilities,
+			-- 	cmd = { "intelephense", "--stdio" },
+			-- 	filetypes = { "php" },
+			-- 	settings = {
+			-- 		diagnostics = {
+			-- 			globals = { "vim" },
+			-- 		},
+			-- 	},
+			-- })
 
-			conf.html.setup({
+			vim.lsp.config("html", {
 				capabilities = capabilities,
 				cmd = { "vscode-html-language-server", "--stdio" },
 				filetypes = { "html" },
 			})
+			vim.lsp.enable("html")
 
-			conf.eslint.setup({
+			vim.lsp.config("eslint", {
 				capabilities = capabilities,
 				cmd = { "vscode-eslint-language-server", "--stdio" },
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
@@ -73,18 +76,18 @@ return {
 						},
 					},
 				},
+			})
 
-				conf.tailwindcss.setup({
-					capabilities = capabilities,
-					cmd = { "tailwindcss-language-server", "--stdio" },
-					filetypes = { "html", "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" }, -- Add more as needed
-					init_options = {
-						userLanguages = {
-							eelixir = "html", -- example mappings, remove if not needed
-							eruby = "html",
-						},
+			conf.tailwindcss.setup({
+				capabilities = capabilities,
+				cmd = { "tailwindcss-language-server", "--stdio" },
+				filetypes = { "html", "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" }, -- Add more as needed
+				init_options = {
+					userLanguages = {
+						eelixir = "html", -- example mappings, remove if not needed
+						eruby = "html",
 					},
-				}),
+				},
 			})
 
 			conf.gopls.setup({
@@ -100,6 +103,19 @@ return {
 						},
 					},
 				},
+			})
+
+			conf.csharp_ls.setup({
+				capabilities = capabilities,
+				cmd = { "csharp-ls" },
+				filetypes = { "cs" },
+				root_dir = conf.util.root_pattern("*.sln", "*.csproj", ".git"),
+			})
+
+			conf.clangd.setup({
+				capabilities = capabilities,
+				cmd = { "clangd" },
+				filetypes = { "c", "cpp", "objc", "objcpp" },
 			})
 		end,
 	},
