@@ -3,7 +3,6 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = { "saghen/blink.cmp" },
 		config = function()
-			local conf = require("lspconfig")
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
@@ -13,10 +12,20 @@ return {
 			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
 				cmd = { "lua-language-server" },
+				filetypes = { "lua" },
+				root_markers = { ".git" },
 				settings = {
 					Lua = {
+						runtime = {
+							version = "LuaJIT",
+						},
 						diagnostics = {
-							globals = { "vim" },
+							globals = { "vim", "love" },
+						},
+						workspace = {
+							library = {
+								["/root/.local/share/love-api"] = true,
+							},
 						},
 					},
 				},
@@ -59,7 +68,7 @@ return {
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
 			})
 
-			conf.emmet_ls.setup({
+			vim.lsp.config("emmet_ls", {
 				capabilities = capabilities,
 				cmd = { "emmet-ls", "--stdio" }, -- from nodePackages.emmet-ls
 				filetypes = {
@@ -77,8 +86,9 @@ return {
 					},
 				},
 			})
+			vim.lsp.enable("emmet_ls")
 
-			conf.tailwindcss.setup({
+			vim.lsp.config("tailwindcss", {
 				capabilities = capabilities,
 				cmd = { "tailwindcss-language-server", "--stdio" },
 				filetypes = { "html", "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" }, -- Add more as needed
@@ -90,7 +100,7 @@ return {
 				},
 			})
 
-			conf.gopls.setup({
+			vim.lsp.config("gopls", {
 				capabilities = capabilities,
 				cmd = { "gopls" },
 				filetypes = { "go", "gomod", "gowork", "gotmpl" },
@@ -104,15 +114,16 @@ return {
 					},
 				},
 			})
+			vim.lsp.enable("gopls")
 
-			conf.csharp_ls.setup({
+			vim.lsp.config("csharp_ls", {
 				capabilities = capabilities,
 				cmd = { "csharp-ls" },
 				filetypes = { "cs" },
-				root_dir = conf.util.root_pattern("*.sln", "*.csproj", ".git"),
+				root_dir = vim.fs.find({ "*.sln", "*.csproj", ".git" }, { upward = true })[1],
 			})
 
-			conf.clangd.setup({
+			vim.lsp.config("clangd", {
 				capabilities = capabilities,
 				cmd = { "clangd" },
 				filetypes = { "c", "cpp", "objc", "objcpp" },
