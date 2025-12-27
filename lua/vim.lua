@@ -9,20 +9,58 @@ vim.opt.number = true
 vim.g.mapleader = " "
 -- vim.keymap.set("n", "<C-n>", ":Neotree filesystem reveal left<CR>")
 
+local Terminal = require("toggleterm.terminal").Terminal
+local lazygit = Terminal:new({
+  cmd = "lazygit",
+  hidden = true,
+  direction = "float",
+})
+
+vim.keymap.set("n", "<C-g>", function()
+  lazygit:toggle()
+end, { desc = "Toggle lazygit" })
+
 vim.keymap.set("n", "<C-n>", ":Yazi<CR>", { desc = "Open Yazi" })
 
+-- Function to get Git project root, fallback to cwd
+local function get_project_root()
+  local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+  if vim.v.shell_error ~= 0 then
+    return vim.fn.getcwd()
+  end
+  return git_root
+end
+
+-- Terminal instance
+local project_term = Terminal:new({
+  cmd = nil, -- nil for raw shell
+  hidden = true,
+  direction = "float",
+  cwd = get_project_root(),
+  float_opts = {
+    border = "rounded",
+    width = 120,
+    height = 30,
+  },
+})
+
+-- Keymap to toggle
+vim.keymap.set("n", "<C-t>", function()
+  project_term:toggle()
+end, { desc = "Toggle project root terminal" })
+
 vim.diagnostic.config({
-	virtual_text = true,
-	signs = false,
-	update_in_insert = false,
-	underline = true,
+  virtual_text = true,
+  signs = false,
+  update_in_insert = false,
+  underline = true,
 })
 
 vim.keymap.set("n", "<leader>e", function()
-	vim.diagnostic.open_float(nil, {
-		focus = true,
-		border = "rounded",
-		max_width = 80,
-		scope = "cursor",
-	})
+  vim.diagnostic.open_float(nil, {
+    focus = true,
+    border = "rounded",
+    max_width = 80,
+    scope = "cursor",
+  })
 end, { desc = "Show diagnostic message" })
