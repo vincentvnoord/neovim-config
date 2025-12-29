@@ -64,3 +64,14 @@ vim.keymap.set("n", "<leader>e", function()
     scope = "cursor",
   })
 end, { desc = "Show diagnostic message" })
+
+vim.api.nvim_create_autocmd("InsertLeave", {
+  pattern = "*",
+  callback = function()
+    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    if #clients > 0 then
+      vim.lsp.buf.format({ async = false }) -- format synchronously
+      vim.cmd("write")                   -- save buffer
+    end
+  end,
+})
